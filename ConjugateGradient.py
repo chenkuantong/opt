@@ -6,6 +6,8 @@ Created on Apr 26, 2013
 
 from numpy import dot
 from numpy.linalg import norm
+from scipy.optimize.linesearch import line_search_wolfe1
+
 def linearConjugateGradient(A, x0, b, N=None, tol=1e-6):
     '''
     A,b: Ax=b, the linear system
@@ -40,10 +42,30 @@ def linearConjugateGradient(A, x0, b, N=None, tol=1e-6):
     print 'stop in ', N, ' th step'
     return x0
 
-'''
-def NonlinearConjugateGradient(func, grad, x0, tol=1e-6, maxIter=10000):
+
+def nonlinearConjugateGradient(func, grad, x0, tol=1e-6, maxIter=10000):
+    '''
+    func,grad: f(x),gf(x)=func(x),grad(x)
+    x0: starting point of x
+    tol: stop while the grad is less than tol
+    maxIter: maximum iteration number
+    
+    return value:
+    x: the optimized point of x
+    
+    line_search_wolfe1 is the wrap of minpack from scipy
+    '''
     gf0=grad(x0)
     p0=-gf0
+    iterNum=1
     while(norm(gf0)>tol):
-'''
-        
+        alpha=line_search_wolfe1(func, grad, x0, p0, c2=0.5)
+        x0=x0+alpha*p0
+        if iterNum==maxIter:
+            return x0
+        gf1=grad(x0)
+        beta=(norm(gf1)/norm(gf0))**2
+        p0=-gf1+beta*p0
+        gf0=gf1
+        iterNum=iterNum+1
+    return x0
