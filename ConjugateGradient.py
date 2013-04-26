@@ -6,7 +6,7 @@ Created on Apr 26, 2013
 
 from numpy import dot
 from numpy.linalg import norm
-def LinearConjugateGradient(A, x0, b, N=None, tol=1e-6):
+def linearConjugateGradient(A, x0, b, N=None, tol=1e-6):
     '''
     A,b: Ax=b, the linear system
     x0: initial value of x
